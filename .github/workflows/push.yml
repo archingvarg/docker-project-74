@@ -11,28 +11,21 @@ env:
   COLOR_MAP: '{ success: "#008000", failure: "#800000" }'
 
 jobs:
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+      
+      - name: Tests
+        run: |
+          make ci
+
   build:
     runs-on: ubuntu-latest
     steps:
 
       - uses: actions/checkout@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Install Docker Compose
-        run: |
-          DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
-          mkdir -p $DOCKER_CONFIG/cli-plugins
-          curl -SL https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-linux-x86_64  \
-            -o $DOCKER_CONFIG/cli-plugins/docker-compose
-          chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
-          docker compose version
-
-      - name: Check
-        run: |
-          make ci
-
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
