@@ -3,6 +3,8 @@ version: '3.8'
 
 services:
   app:
+    depends_on: 
+      - db
     build:
       context: .
       dockerfile: Dockerfile.production
@@ -12,3 +14,21 @@ services:
 #      - ./app:/app
     working_dir: /app
     command: ["make", "test"]
+  
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  
